@@ -3,29 +3,46 @@ import React, { Component } from 'react';
 import './App.css';
 
 const BASE_URI = 'https://api.openweathermap.org/data/2.5/weather?'
-const LATITUDE_PARAM = 'lat='
-const LONGTITUDE_PARAM = 'lon='
-const APP_ID_PARAM = 'appid='
+const LATITUDE_KEY = 'lat='
+const LONGTITUDE_KEY = 'lon='
+const UNITS_KEY = 'units='
+const METRIC_VALUE = 'metric'
+const IMPERIAL_VALUE = 'imperial'
+const APP_ID_KEY = 'appid='
 
 class App extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      apiUrl: ''
+      apiUrl: '',
+      units: 'metric',
+      weatherDescription: '',
+      location: '',
+      temperature: ''
     }
   }
 
   getApiUrl ({latitude, longitude}) {
-    return `${BASE_URI}${LATITUDE_PARAM}${latitude}&${LONGTITUDE_PARAM}${longitude}&${APP_ID_PARAM}${APP_ID}`
+    return `${BASE_URI}${LATITUDE_KEY}${latitude}&${LONGTITUDE_KEY}${longitude}&${UNITS_KEY}${METRIC_VALUE}&${APP_ID_KEY}${APP_ID}`
+  }
+
+  getWeather() {
+    fetch(this.state.apiUrl)
+      .then((response) => response.json() )
+      .then((data) => this.setState(
+        {
+          weatherDescription: data.weather[0].description,
+          temperature: data.main.temp,
+          location: data.name,
+        }
+      ))
   }
 
   componentDidMount() {
     navigator.geolocation.getCurrentPosition(({ coords }) => {
       const apiUrl = this.getApiUrl(coords)
       this.setState({ apiUrl })
-      fetch(apiUrl)
-        .then((response) => response.json() )
-        .then((data) => { console.log(data)})
+      this.getWeather()
     });
   }
 
@@ -33,7 +50,12 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-      <h1>{console.log(this.state)}</h1>
+        <h1>What's the weather?</h1>
+          {this.state.location && 
+          <p>
+            You are in {this.state.location}. The weather there is {this.state.weatherDescription}. 
+            The temperature is {this.state.temperature}.
+          </p>}
       </div>
     );
   }
