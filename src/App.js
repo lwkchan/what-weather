@@ -15,35 +15,59 @@ class App extends Component {
     super(props)
     this.state = {
       apiUrl: '',
-      units: 'metric',
+      useMetric: true,
+      units: {
+        name: {
+          metric: 'celsius',
+          imperial: 'farenheit'
+        },
+        unitSymbol: {
+          metric: '°C',
+          imperial: '°F'
+        },
+        apiValue: {
+          metric: METRIC_VALUE,
+          imperial: IMPERIAL_VALUE
+        },
+      },
       weatherDescription: '',
       location: '',
+      coords: {
+        latitude: '',
+        longitude: ''
+      },
       temperature: ''
     }
+    this.changeUnit = this.changeUnit.bind(this)
   }
 
-  getApiUrl ({latitude, longitude}) {
-    return `${BASE_URI}${LATITUDE_KEY}${latitude}&${LONGTITUDE_KEY}${longitude}&${UNITS_KEY}${METRIC_VALUE}&${APP_ID_KEY}${APP_ID}`
+  getApiUrl () {
+    const unitsValue = this.state.useMetric? this.state.units.apiValue.metric : this.state.units.apiValue.imperial
+    const { latitude, longitude } = this.state.coords
+    return `${BASE_URI}${LATITUDE_KEY}${latitude}&${LONGTITUDE_KEY}${longitude}&${UNITS_KEY}${unitsValue}&${APP_ID_KEY}${APP_ID}`
   }
 
   getWeather() {
-    fetch(this.state.apiUrl)
-      .then((response) => response.json() )
-      .then((data) => this.setState(
-        {
-          weatherDescription: data.weather[0].description,
-          temperature: data.main.temp,
-          location: data.name,
-        }
-      ))
+    const apiUrl = this.getApiUrl();
+    fetch(apiUrl)
+      .then((response) => response.json())
+      .then((data) => this.setState({
+        weatherDescription: data.weather[0].description,
+        location: data.name,
+        temperature: data.main.temp,
+      }))
   }
 
   componentDidMount() {
     navigator.geolocation.getCurrentPosition(({ coords }) => {
-      const apiUrl = this.getApiUrl(coords)
-      this.setState({ apiUrl })
+      const { longitude, latitude } = coords
+      this.setState({ coords: { longitude, latitude } })
       this.getWeather()
     });
+  }
+
+  changeUnit() {
+    this.setState({useMetric: !this.state.useMetric}, this.getWeather())
   }
 
 
@@ -52,10 +76,16 @@ class App extends Component {
       <div className="App">
         <h1>What's the weather?</h1>
           {this.state.location && 
-          <p>
-            You are in {this.state.location}. The weather there is {this.state.weatherDescription}. 
-            The temperature is {this.state.temperature}.
-          </p>}
+          <div>
+            <p>
+              You are in {this.state.location}. The weather there is {this.state.weatherDescription}. 
+              The temperature is {this.state.temperature} {this.state.useMetric? this.state.units.unitSymbol.metric : this.state.units.unitSymbol.imperial  }.
+            </p>
+            <button onClick={this.changeUnit}>
+              See the weather in {this.state.useMetric? this.state.units.name.imperial : this.state.units.name.metric}
+            </button>
+          </div>
+          }
       </div>
     );
   }
