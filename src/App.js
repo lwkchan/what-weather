@@ -67,7 +67,10 @@ class App extends Component {
   }
 
   changeUnit() {
-    this.setState({useMetric: !this.state.useMetric}, this.getWeather())
+    this.setState(
+      {useMetric: !this.state.useMetric},
+      () => this.getWeather()
+    )
   }
 
 
