@@ -42,7 +42,7 @@ class App extends Component {
     this.changeUnit = this.changeUnit.bind(this)
   }
 
-  getApiUrl () {
+  getApiUrl() {
     const unitsValue = this.state.useMetric? this.state.units.apiValue.metric : this.state.units.apiValue.imperial
     const { latitude, longitude } = this.state.coords
     return `${BASE_URI}${LATITUDE_KEY}${latitude}&${LONGTITUDE_KEY}${longitude}&${UNITS_KEY}${unitsValue}&${APP_ID_KEY}${APP_ID}`
