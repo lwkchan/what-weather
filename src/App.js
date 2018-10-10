@@ -80,17 +80,15 @@ class App extends Component {
     return (
       <div className="App">
         <h1>What's the weather?</h1>
-          {!this.state.loading &&
-          <div>
+          {this.state.temperature && 
             <p>
               You are in {this.state.location}. The weather is {this.state.weatherDescription}. 
               The temperature is {this.state.temperature} {this.state.useMetric? this.state.units.unitSymbol.metric : this.state.units.unitSymbol.imperial  }.
-            </p>
+            </p>}
+          {!this.state.loading &&
             <button onClick={this.changeUnit}>
               See the weather in {this.state.useMetric? this.state.units.name.imperial : this.state.units.name.metric}
-            </button>
-          </div>
-          }
+            </button>}
       </div>
     );
   }
