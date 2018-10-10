@@ -15,7 +15,7 @@ class App extends Component {
     super(props)
     this.state = {
       apiUrl: '',
-      loading: true,
+      isLoading: true,
       useMetric: true,
       units: {
         name: {
@@ -53,7 +53,7 @@ class App extends Component {
     fetch(apiUrl)
       .then((response) => response.json())
       .then((data) => this.setState({
-        loading: false,
+        isLoading: false,
         weatherDescription: data.weather[0].description,
         location: data.name,
         temperature: data.main.temp,
@@ -70,7 +70,7 @@ class App extends Component {
 
   changeUnit() {
     this.setState(
-      {useMetric: !this.state.useMetric, loading: true },
+      {useMetric: !this.state.useMetric, isLoading: true },
       () => this.getWeather()
     )
   }
@@ -81,11 +81,12 @@ class App extends Component {
       <div className="App">
         <h1>What's the weather?</h1>
           {this.state.temperature && 
-            <p>
-              You are in {this.state.location}. The weather is {this.state.weatherDescription}. 
-              The temperature is {this.state.temperature} {this.state.useMetric? this.state.units.unitSymbol.metric : this.state.units.unitSymbol.imperial  }.
-            </p>}
-          {!this.state.loading &&
+            <ul>
+              <li>You are in {this.state.location}. The weather is {this.state.weatherDescription}.</li>
+              {!this.state.isLoading &&
+              <li> The temperature is {this.state.temperature} {this.state.useMetric? this.state.units.unitSymbol.metric : this.state.units.unitSymbol.imperial  }</li>}
+            </ul>}
+          {!this.state.isLoading &&
             <button onClick={this.changeUnit}>
               See the weather in {this.state.useMetric? this.state.units.name.imperial : this.state.units.name.metric}
             </button>}
