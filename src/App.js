@@ -15,6 +15,7 @@ class App extends Component {
     super(props)
     this.state = {
       apiUrl: '',
+      loading: true,
       useMetric: true,
       units: {
         name: {
@@ -52,6 +53,7 @@ class App extends Component {
     fetch(apiUrl)
       .then((response) => response.json())
       .then((data) => this.setState({
+        loading: false,
         weatherDescription: data.weather[0].description,
         location: data.name,
         temperature: data.main.temp,
@@ -68,7 +70,7 @@ class App extends Component {
 
   changeUnit() {
     this.setState(
-      {useMetric: !this.state.useMetric},
+      {useMetric: !this.state.useMetric, loading: true },
       () => this.getWeather()
     )
   }
@@ -78,10 +80,10 @@ class App extends Component {
     return (
       <div className="App">
         <h1>What's the weather?</h1>
-          {this.state.location && 
+          {!this.state.loading &&
           <div>
             <p>
-              You are in {this.state.location}. The weather there is {this.state.weatherDescription}. 
+              You are in {this.state.location}. The weather is {this.state.weatherDescription}. 
               The temperature is {this.state.temperature} {this.state.useMetric? this.state.units.unitSymbol.metric : this.state.units.unitSymbol.imperial  }.
             </p>
             <button onClick={this.changeUnit}>
