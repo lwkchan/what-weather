@@ -77,18 +77,26 @@ class App extends Component {
 
 
   render() {
+    const { 
+      isLoading,
+      useMetric,
+      units,
+      location,
+      weatherDescription,
+      temperature
+    } = this.state
     return (
       <div className="App">
         <h1>What's the weather?</h1>
-          {this.state.temperature && 
+          {temperature && 
             <ul>
-              <li>You are in {this.state.location}. The weather is {this.state.weatherDescription}.</li>
-              {!this.state.isLoading &&
-              <li> The temperature is {this.state.temperature} {this.state.useMetric? this.state.units.unitSymbol.metric : this.state.units.unitSymbol.imperial  }</li>}
+              <li>You are in {location}. The weather is {weatherDescription}.</li>
+              {!isLoading &&
+              <li> The temperature is {temperature} {useMetric? units.unitSymbol.metric : units.unitSymbol.imperial  }</li>}
             </ul>}
-          {!this.state.isLoading &&
+          {!isLoading &&
             <button onClick={this.changeUnit}>
-              See the weather in {this.state.useMetric? this.state.units.name.imperial : this.state.units.name.metric}
+              See the weather in {useMetric? units.name.imperial : units.name.metric}
             </button>}
       </div>
     );
